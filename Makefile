@@ -4,11 +4,11 @@ clean: delete-k8s delete-docker-image clean-app
 
 build: build-app build-docker-image
 
-deploy: deploy-k8s-service deploy-k8s-lb
+deploy: deploy-k8s-configmap deploy-k8s-secrets deploy-k8s-service deploy-k8s-lb
 	$(call printTaskHeader, Application has been deployed)
 
 ########## Clean Steps ##########
-delete-k8s: delete-k8s-lb delete-k8s-service
+delete-k8s: delete-k8s-lb delete-k8s-service delete-k8s-secrets delete-k8s-configmap
 
 delete-k8s-lb:
 	$(call printTaskHeader, Deleting springboot-container-lb Load Balancer Service from K8s)
@@ -17,6 +17,14 @@ delete-k8s-lb:
 delete-k8s-service:
 	$(call printTaskHeader, Deleting springboot-container Deployment from K8s)
 	kubectl delete -f resource-manifests/springboot-container.yaml || true
+
+delete-k8s-configmap:
+	$(call printTaskHeader, Deleting ConfigMap from K8s)
+	kubectl delete -f resource-manifests/configmap.yaml || true
+
+delete-k8s-secrets:
+	$(call printTaskHeader, Deleting Secrets from K8s)
+	kubectl delete secret test-secret || true
 
 delete-docker-image:
 	$(call printTaskHeader, Deleting ericoi/springboot-container image from Docker)
@@ -39,6 +47,15 @@ build-docker-image:
 	docker build -t ericoi/springboot-container .
 
 ########## Deploy Steps ##########
+deploy-k8s-configmap:
+	$(call printTaskHeader, Creating K8s ConfigMap)
+	kubectl create -f resource-manifests/configmap.yaml
+
+deploy-k8s-secrets:
+	$(call printTaskHeader, Creating K8s Secrets)
+	kubectl create secret generic test-secret --from-file=./resource-manifests/secrets.properties
+##kubectl create -f resource-manifests/secrets.yaml
+
 deploy-k8s-service:
 	$(call printTaskHeader, Creating K8s Deployment springboot-container)
 	kubectl create -f resource-manifests/springboot-container.yaml

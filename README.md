@@ -1,12 +1,14 @@
 # sandbox-springboot-container
 
 This is an example Java SpringBoot project which creates a Docker image and runs in a Kubernetes cluster with Load Balancing between 2 instances.
+The application is also reading in properties from files that are injected via a K8s ConfigMap and Secret.
 
 # Checkin History
 History of git project checkins demonstrates:
 1. Regular Springboot Rest application
 2. Deploy the above to Docker image/container
 3. Deploy the Docker image to Kubernetes cluster with Load Balancing
+4. Inject K8s ConfigMap and Secrets and have application read them in and log
 
 # Prerequisites
 Git <br>
