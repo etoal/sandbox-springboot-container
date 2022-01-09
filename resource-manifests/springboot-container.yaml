@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: springboot-container
+spec:
+  replicas: 2
+  minReadySeconds: 15
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: springboot-container
+  template:
+    metadata:
+      labels:
+        app: springboot-container
+    spec:
+      containers:
+        - image: ericoi/springboot-container
+          #imagePullPolicy: Always
+          imagePullPolicy: Never
+          name: springboot-container
+          ports:
+            - containerPort: 8090
